@@ -15,7 +15,7 @@ export const createStudent = async (req: Request, res: Response) => {
             notes,
             userId,
             classes: {
-            connect: [] // ou omita completamente se preferir
+            connect: []
             },
             payments: {
             connect: []
@@ -47,3 +47,20 @@ export const createStudent = async (req: Request, res: Response) => {
         res.status(400).json({ error: 'Erro ao cadastrar aluno', details: err })
     }
 }
+
+export const getAllStudents = async (req: Request, res: Response) => {
+  try {
+    const students = await prisma.student.findMany({
+      include: {
+        classes: true,
+        payments: true,
+        progress: true,
+      },
+    });
+
+    res.status(200).json(students);
+  } catch (err) {
+    console.error("Erro ao buscar alunos:", err);
+    res.status(500).json({ error: "Erro ao buscar alunos", details: err });
+  }
+};
